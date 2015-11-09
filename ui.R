@@ -20,8 +20,12 @@ shinyUI(
       selectInput("total_prior", "Prior for Total", total_priors), 
       selectInput("prop_prior", "Prior for Proportion", prop_priors), 
       hr(),
-      h4("Hyperparameters:")
-      
+      h4("Hyperparameters:"),
+      conditionalPanel(
+        condition = "input.total_prior == 'pois'",
+        sliderInput("total_lambda",HTML("Total prior = &lamgda;"), value = 50, min = 1, max = 120)
+        
+      )
     ),
     mainPanel(
       "Main"
