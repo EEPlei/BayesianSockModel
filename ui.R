@@ -1,13 +1,24 @@
 library(shiny)
 
-total_priors = c("Poisson" = "pois", "Gamma" = "gam", "Negative Binomial" = "nbin")
-prop_priors = c("Beta" = "beta", "Truncated Normal" = "tnorm")
+total_priors = c("Poisson" = "pois", 
+                 "Binomial" = "bin", 
+                 "Negative Binomial" = "nbin",
+                 "Hypergeometric" = "hypgeo" ,
+                 "Geometric" = "geo", 
+                 "Bernoulli" = "bern"
+                 )
+prop_priors = c("Beta" = "beta", 
+                "Truncated Normal" = "tnorm", 
+                "Normal" = "norm", 
+                "Beta" = "beta", 
+                "Gamma" = "gam", 
+                "Uniform" = "unif")
 
   
 shinyUI(
   fluidPage(
     titlePanel(
-      "Socks ABC"
+      "Carl's Socks ABC"
     ),
     sidebarPanel(
       numericInput("n_sims", h4("Simulations:"), value = 1000, min = 100, step = 1),
