@@ -1,0 +1,12 @@
+---
+title: "Duke Dinosaurs HW 4"
+author: "Lei Qian"
+date: "November 11, 2015"
+output: html_document
+---
+
+For our implementation, we chose to go with the following discrete distributions to deterimine the probability that n is the total number of socks we have in the washer.    
+`Poisson`     
+`Negative Binomial`     
+We need discrete distributions, because looking at the scenario we are dealing with, it's highly unlikely that we are going to have a fraction of a sock.    
+We choose a Poisson distribution because 
