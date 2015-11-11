@@ -9,4 +9,5 @@ For our implementation, we chose to go with the following discrete distributions
 `Poisson`     
 `Negative Binomial`     
 We need discrete distributions, because looking at the scenario we are dealing with, it's highly unlikely that we are going to have a fraction of a sock.    
-We choose a Poisson distribution because 
+
+To describe the proportion of socks that are part of pair within the total number of socks in the washer, we use the following continuous distributions. 
