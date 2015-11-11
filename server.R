@@ -47,9 +47,7 @@ shinyServer(
           
           # Returning the parameters and counts of the number of matched 
           # and unique socks among those that were picked out.
-          sock_sim <- c(unique = sum(sock_counts == 1), pairs = sum(sock_counts == 2),
-                        n_socks = n_socks, n_pairs = n_pairs, n_odd = n_odd, prop_pairs = prop_pairs)
-          sock_sim <- t(sock_sim)
+          sock_sim <- sum(sock_counts == 1)
           
           return(sock_sim)
         }
@@ -60,23 +58,21 @@ shinyServer(
     
     posterior = reactive(
       {
-        post_samples <- sims()[sims()[, "unique"] == input$n_odd &
-                                 sims()[, "pairs" ] == input$n_pairs, ]
-        return(post_samples)
+        priors()[sims()==input$n_odd,]
       }
     )
     
     output$total_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,3], freq=FALSE, main="Total Socks in Laundry")
+        hist(posterior()[,1], freq=FALSE, main="Total Socks in Laundry")
       }
     )
     
     output$prop_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,6], freq=FALSE, main="Proportion of Socks in Pairs")
+        hist(posterior()[,2], freq=FALSE, main="Proportion of Socks in Pairs")
       }
     )
   }
