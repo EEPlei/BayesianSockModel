@@ -3,11 +3,6 @@ library(truncnorm)
 shinyServer(
   function(input, output, session) 
   {
-    observe(
-      {
-        updateSliderInput(session,"n_black", max = input$n_drawn)
-      }
-    )
     
     priors = reactive(
       {
@@ -33,13 +28,30 @@ shinyServer(
     
     sims = reactive(
       {
-        gen_model = function(prior_N_total,prior_p_total_black)
+        gen_model = function(prior_N_total,prior_prop_total)
         {
-          n_black_bag = rbinom(1, prior_N_total, prior_p_total_black)
-          p_black_bag = n_black_bag / prior_N_total
-          n_black_hand = rbinom(1,input$n_drawn,p_black_bag)
+          n_picked <- input$n_odd + 2*input$n_pairs
+          #Total socks in laundry
+          n_socks <- prior_N_total
+          #Proportion of socks in pairs
+          prop_pairs <- prior_prop_total
+          #number of sock pairs
+          n_pairs <- round(floor(n_socks / 2) * prop_pairs)
+          #number of odd socks
+          n_odd <- n_socks - n_pairs * 2
           
-          return(n_black_hand)
+          # Simulating picking out n_picked socks
+          socks <- rep(seq_len(n_pairs + n_odd), rep(c(2, 1), c(n_pairs, n_odd)))
+          picked_socks <- sample(socks, size =  min(n_picked, n_socks))
+          sock_counts <- table(picked_socks)
+          
+          # Returning the parameters and counts of the number of matched 
+          # and unique socks among those that were picked out.
+          sock_sim <- c(unique = sum(sock_counts == 1), pairs = sum(sock_counts == 2),
+                        n_socks = n_socks, n_pairs = n_pairs, n_odd = n_odd, prop_pairs = prop_pairs)
+          sock_sim <- t(sock_sim)
+          
+          return(sock_sim)
         }
         
         apply(priors(),1, function(x) gen_model(x[1],x[2]))
@@ -48,23 +60,23 @@ shinyServer(
     
     posterior = reactive(
       {
-        priors()[sims()==input$n_black,]    
+        post_samples <- sims()[sims()[, "unique"] == input$n_odd &
+                                 sims()[, "pairs" ] == input$n_pairs, ]
+        return(post_samples)
       }
     )
     
     output$total_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,1], freq=FALSE, main="Total Jelly Beans")
-        lines(density( priors()$total ),col='green',lwd=3)
+        hist(posterior()[,3], freq=FALSE, main="Total Socks in Laundry")
       }
     )
     
     output$prop_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,2], freq=FALSE, main="Proportion of Black Jelly Beans")
-        lines(density( priors()$prop ),col='blue',lwd=3)
+        hist(posterior()[,6], freq=FALSE, main="Proportion of Socks in Pairs")
       }
     )
   }
