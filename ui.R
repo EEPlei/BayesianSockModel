@@ -1,52 +1,57 @@
 library(shiny)
 
 total_priors = c("Poisson" = "pois", "Negative Binomial" = "nbinom")
+# discrete dist. for total # of socks in washer #
 prop_priors = c("Beta" = "beta", "Truncated Normal"="tnorm")
-
-shinyUI(
-  fluidPage(
-    titlePanel(
-      "Karl Broman's Socks"
+# cont. dist for prop of socks that are pairs #
+shinyUI( # create user interface #
+  fluidPage( # create fluid page layout # 
+    titlePanel( # create panel for app title #
+      "Karl Broman's Socks" # app title # 
     ),
-    sidebarPanel(
-      numericInput("n_sims", h4("Simulations:"),
+    sidebarPanel( # creates sidebar panel # 
+      
+      numericInput("n_sims", h4("Simulations:"), 
                    value = 1000, min = 100, step = 1),
       hr(),
       h4("Data:"),
-      sliderInput("n_pairs", "Number of picked sock pairs:", 
+      sliderInput("n_pairs", "Number of Sock Pairs Picked:", 
                   min=0, max=30, value=0, step=1),
-      sliderInput("n_odd", "Number of picked odd socks:", 
-                  min=0, max=30, value=11, step=1),
+      sliderInput("n_odd", "Number of Unique Socks Picked:", 
+                  min=0, max=30, value=0, step=1),
       hr(),
       h4("Priors:"),
-      selectInput("total_prior", "Prior for total", total_priors),
-      selectInput("prop_prior", "Prior for proportion", prop_priors),
+      selectInput("total_prior", "Prior for Total Number of Socks", 
+                  total_priors),
+      selectInput("prop_prior", "Prior for Proportion of Paired Socks", 
+                  prop_priors),
       hr(),
       h4("Hyperparameters:"),
+      #conditionalPanel() panel that may or may not be visible #
       conditionalPanel(
         condition="input.total_prior == 'pois'",
-        sliderInput("total_lambda",HTML("Total prior - &lambda;"), 
-                    svalue = 50, min=1, max=120)
-      ),
+        sliderInput("total_lambda",HTML("Total Prior - &lambda;"), 
+                    value = 50, min=1, max=120)
+        ),
       conditionalPanel(
         condition="input.total_prior == 'nbinom'",
-        numericInput("total_r",HTML("Total prior - r"), 
+        numericInput("total_r",HTML("Total Prior - r"), 
                      value = 50, min=1, max=120),
-        numericInput("total_p",HTML("Total prior - p"), 
+        numericInput("total_p",HTML("Total Prior - p"), 
                      value = 0.5, min=0, max=1)
       ),
       conditionalPanel(
         condition="input.prop_prior == 'beta'",
-        numericInput("prop_alpha",HTML("Total prior - &alpha;"), 
+        numericInput("prop_alpha",HTML("Proportion Prior - &alpha;"), 
                      value = 1/3 , min=0, max=NA),
-        numericInput("prop_beta",HTML("Total prior - &beta;"), 
+        numericInput("prop_beta",HTML("Proportion Prior - &beta;"), 
                      value = 1, min=0, max=NA)
       ),
       conditionalPanel(
         condition="input.prop_prior == 'tnorm'",
-        numericInput("prop_mu",HTML("Proportion prior - &mu;"), 
+        numericInput("prop_mu",HTML("Proportion Prior - &mu;"), 
                      value = 0.5, min=NA, max=NA),
-        numericInput("prop_sigma",HTML("Proportion prior - &sigma;"), 
+        numericInput("prop_sigma",HTML("Proportion Prior - &sigma;"), 
                      value = 0.1, min=0, max=NA)
       )
     ),
