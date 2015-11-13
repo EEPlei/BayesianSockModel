@@ -175,12 +175,11 @@ shinyServer(
     
     output$prior_plot = renderPlot(
       {
-        par(mar=c(4,4,4,0.1), mfrow = c(2,2), cex.main = 0.8)
-        
         n_socks <- priors_total()
         prop_pairs <- priors_prop()
         n_pairs <- round(floor(n_socks / 2) * prop_pairs)
         n_odd <- n_socks - n_pairs * 2
+        par(mar=c(4,4,4,0.1), mfrow = c(2,2), cex.main = 0.8)
         
         hist(priors_total(), freq=FALSE,
              main="Prior - Total Socks in Laundry",
@@ -210,6 +209,17 @@ shinyServer(
         lines(density(n_odd), col = 'red', lwd = 2, 
               xlab = NULL, 
               ylab = NULL)
+      }
+    )
+    output$summary_table <- renderTable(
+      {
+       x <- rbind(summary(posterior_N()),
+                  summary(posterior_p()),
+                  summary(sims()[1,]),
+                  summary(sims()[2,]))
+       rownames(x) <- c("Posterior Total Socks", "Posterior Proportion Paired",
+                        "Posterior Odd Socks", "Posterior Paired Socks")
+       x
       }
     )
   }

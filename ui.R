@@ -9,6 +9,9 @@ prop_priors = c("Beta" = "beta",
                 "Uniform" = "unif")
 # cont. dist for prop of socks that are pairs #
 
+option_table = c("Yes" = "y", 
+                 "No" = "n")
+
 shinyUI( # create user interface #
   fluidPage( # create fluid page layout # 
     titlePanel( # create panel for app title #
@@ -65,7 +68,9 @@ shinyUI( # create user interface #
                      value = 0, min=0, max=1),
         numericInput("prop_max",HTML("Proportion Prior - Max;"), 
                      value = 0.5, min=0, max=1)
-      )
+      ), 
+      hr(),
+      selectInput("table", "Summary Table Option", option_table)
     ),
     mainPanel(
       h4("Results:"),
@@ -73,7 +78,12 @@ shinyUI( # create user interface #
       plotOutput("prior_plot"), 
       br(),
       #Proportion of Socks in Pairs
-      plotOutput("post_plot")
+      plotOutput("post_plot"), 
+      br(),
+      conditionalPanel(
+        condition = "input.table == 'y'", 
+        tableOutput("summary_table")
+      )
     )
   )
 )
