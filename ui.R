@@ -70,10 +70,10 @@ shinyUI( # create user interface #
     mainPanel(
       h4("Results:"),
       #Total Socks in Laundry
-      plotOutput("total_plot"), 
+      plotOutput("prior_plot"), 
       br(),
       #Proportion of Socks in Pairs
-      plotOutput("prop_plot")
+      plotOutput("post_plot")
     )
   )
 )

@@ -139,100 +139,77 @@ shinyServer(
       }
     )
     
-    output$total_plot = renderPlot(
+    output$post_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1), mfrow = c(2,2), cex.main = 0.8)
         hist(posterior_N(), freq=FALSE,
              main="Posterior - Total Socks in Laundry",
              xlab = "Total Socks",
-             ylab = NULL
-             )
-        
+             ylab = NULL)
         lines(density(posterior_N()), col='blue',lwd=2, 
               xlab = NULL,
-              ylab = NULL
-              )
+              ylab = NULL)
         hist(posterior_p(), freq=FALSE,
              main="Posterior - Proportion of Socks in Pairs",
              xlab = "% of Total Socks Part of a Pair",
-             ylab = NULL
-        )
-        
+             ylab = NULL)
         lines(density(posterior_p()), col='blue',lwd=2, 
               xlab = NULL,
-              ylab = NULL
-        )
+              ylab = NULL)
         hist(sims()[1,], freq = FALSE, 
              main = "Posterior - Odd Socks Picked", 
              xlab = "# of Unique Socks", 
-             ylab = NULL
-        )
-        
+             ylab = NULL)
         lines(density(sims()[1,]), col = 'blue', lwd = 2, 
               xlab = NULL, 
-              ylab = NULL
-        )
-        
+              ylab = NULL)
         hist(sims()[2,], freq = FALSE, 
              main = "Posterior - Sock Pairs Picked", 
              xlab = "# of Pairs", 
-             ylab = NULL
-        )
-        
+             ylab = NULL)
         lines(density(sims()[2,]), col = 'blue', lwd = 2, 
               xlab = NULL, 
-              ylab = NULL
-        )
-
+              ylab = NULL)
       }
     )
     
-    output$prop_plot = renderPlot(
+    output$prior_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1), mfrow = c(2,2), cex.main = 0.8)
-       
+        
+        n_socks <- priors_total()
+        prop_pairs <- priors_prop()
+        n_pairs <- round(floor(n_socks / 2) * prop_pairs)
+        n_odd <- n_socks - n_pairs * 2
         
         hist(priors_total(), freq=FALSE,
              main="Prior - Total Socks in Laundry",
              xlab = "Total Socks",
-             ylab = NULL
-        )
+             ylab = NULL)
         lines(density(priors_total()), col='red',lwd=2, 
               xlab = NULL,
-              ylab = NULL
-        )
+              ylab = NULL)
         hist(priors_prop(), freq=FALSE,
              main="Prior - Proportion of Socks in Pairs",
              xlab = "% of Total Socks Part of a Pair",
-             ylab = NULL
-             )
-        
+             ylab = NULL)
         lines(density(priors_prop()), col='red',lwd=2, 
               xlab = NULL,
-              ylab = NULL
-              )
-        
+              ylab = NULL)
         hist(n_pairs, freq = FALSE, 
              main = "Prior - Odd Socks Picked", 
              xlab = "# of Unique Socks", 
-             ylab = NULL
-        )
-        
+             ylab = NULL)
         lines(density(n_pairs), col = 'red', lwd = 2, 
               xlab = NULL, 
-              ylab = NULL
-        )
-        
+              ylab = NULL)
         hist(n_odd, freq = FALSE, 
              main = "Prior - Sock Pairs Picked", 
              xlab = "# of Pairs", 
-             ylab = NULL
-        )
-        
+             ylab = NULL)
         lines(density(n_odd), col = 'red', lwd = 2, 
               xlab = NULL, 
-              ylab = NULL
-        )
+              ylab = NULL)
       }
     )
   }
