@@ -111,6 +111,7 @@ shinyServer(
         hist(posterior()[,1], freq=FALSE, 
              main="Total Socks in Laundry", 
              xlab = "Total Socks")
+        lines(density(priors()$total), col='blue',lwd=2)
       }
     )
     
@@ -120,6 +121,7 @@ shinyServer(
         hist(posterior()[,2], freq=FALSE, 
              main="Proportion of Socks in Pairs", 
              xlab = "% of Total Socks Part of a Pair")
+        lines(density(priors()$prop), col='red',lwd=2)
       }
     )
   }
