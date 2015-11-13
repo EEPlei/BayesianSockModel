@@ -112,6 +112,7 @@ shinyServer(
              main="Total Socks in Laundry", 
              xlab = "Total Socks")
         lines(density(priors()$total), col='blue',lwd=2)
+        abline(v = mean(posterior()[,1]), col = 'purple')
       }
     )
     
@@ -122,6 +123,7 @@ shinyServer(
              main="Proportion of Socks in Pairs", 
              xlab = "% of Total Socks Part of a Pair")
         lines(density(priors()$prop), col='red',lwd=2)
+        abline(v = mean(posterior()[,2]), col = 'orange')
       }
     )
   }
