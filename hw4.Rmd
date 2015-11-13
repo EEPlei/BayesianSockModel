@@ -8,6 +8,10 @@ output: html_document
 For our implementation, we chose to go with the following discrete distributions to deterimine the probability that n is the total number of socks we have in the washer.    
 `Poisson`     
 `Negative Binomial`     
-We need discrete distributions, because looking at the scenario we are dealing with, it's highly unlikely that we are going to have a fraction of a sock.    
-
+We need discrete distributions, because looking at the scenario we are dealing with, it's highly unlikely that we are going to have a fraction of a sock. A Poisson distribution has one parameter, p.  p tells us the possibility of success within each trial. The probability that we have n socks in the washer is p. A Negative Binomial distribution has two parameters, p and r. p tells us the possibility of success within each trial and r is the number of successes accumulated. So say we have a laundry basket with a variety of clothes, shirts, pants, socks, etc. p is the possibility that an article of clothing inside the laundry basket is a sock. r is the total number of socks inside the laundry basket.     
+        
 To describe the proportion of socks that are part of pair within the total number of socks in the washer, we use the following continuous distributions. 
+`Beta`     
+`Truncated Normal`    
+`Uniform`    
+We can use continuous distributions in this case, because we are calculating the proportion - so x% of our socks have a corresponding pair. Note this doesn't tell us the number of pairs we have, but paired socks. For example, we have 4 sock pairs, but 8 paired socks. 
