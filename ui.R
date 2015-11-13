@@ -1,9 +1,14 @@
 library(shiny)
 
-total_priors = c("Poisson" = "pois", "Negative Binomial" = "nbinom")
+total_priors = c("Poisson" = "pois", 
+                 "Negative Binomial" = "nbinom")
 # discrete dist. for total # of socks in washer #
-prop_priors = c("Beta" = "beta", "Truncated Normal"="tnorm")
+
+prop_priors = c("Beta" = "beta", 
+                "Truncated Normal"="tnorm",
+                "Uniform" = "unif")
 # cont. dist for prop of socks that are pairs #
+
 shinyUI( # create user interface #
   fluidPage( # create fluid page layout # 
     titlePanel( # create panel for app title #
@@ -53,6 +58,13 @@ shinyUI( # create user interface #
                      value = 0.5, min=NA, max=NA),
         numericInput("prop_sigma",HTML("Proportion Prior - &sigma;"), 
                      value = 0.1, min=0, max=NA)
+      ),
+      conditionalPanel(
+        condition="input.prop_prior == 'unif'",
+        numericInput("prop_min",HTML("Proportion Prior - Min;"), 
+                     value = 0, min=0, max=30),
+        numericInput("prop_max",HTML("Proportion Prior - Max;"), 
+                     value = 30, min=0, max=60)
       )
     ),
     mainPanel(

@@ -33,7 +33,9 @@ shinyServer(
           # generate n random deviates with 
           # shape 1 and shape 2 as parameters 
           # beta distribution
-        } else {
+        } 
+        else if (input$prop_prior == "tnorm")
+          {
           d_prop = rtruncnorm(n = input$n_sims,
                               a = 0,
                               b = 1,
@@ -43,8 +45,17 @@ shinyServer(
           # a = lower bound
           # b = upper bound
           # with mean and sd stand. dev.  
+          # Truncated Normal Distribution
         }
-        
+        else 
+        {
+          d_prop = runif(n = input$n_sims, 
+                         min = input$prop_min, 
+                         max = input$prop_max)
+          # generate n random deviates 
+          # from min to max 
+          # Uniform Distribution
+        }
         data.frame(total = d_total, prop = d_prop)
       }
     )
