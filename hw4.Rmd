@@ -4,7 +4,7 @@ author: "Lei Qian"
 date: "November 11, 2015"
 output: html_document
 ---
-
+## Why These Priors ##
 For our implementation, we chose to go with the following discrete distributions to deterimine the probability that n is the total number of socks we have in the washer.    
 `Poisson`     
 `Negative Binomial`     
@@ -15,3 +15,13 @@ To describe the proportion of socks that are part of pair within the total numbe
 `Truncated Normal`    
 `Uniform`    
 We can use continuous distributions in this case, because we are calculating the proportion - so x% of our socks have a corresponding pair. Note this doesn't tell us the number of pairs we have, but paired socks. For example, we have 4 sock pairs, but 8 paired socks. A Beta distribution has to parameters, a and b. These are referred to as shape parameters. The probability that our proportion is x among a + b - 2 trials is a - 1. For a Truncated Normal distribution, we have two parameters, mean and standard deviation, a lower bound, and an upper bound. Our proportion, x, is very likely to be the mean. It becomes less and less likely as we move away from the mean and the rate at which the probability decreases is determined by the standard deviation. For a Trunated Normal distribution, our proportion x is bounded between two numbers. A Uniform Distribution tells us that our proportion x is equally likely to be any number. We added this distribution, since we don't know how many people are contribution socks to the laundry. It might be better to play it safe and consider everything to be equally likely. One thing to note is that our proportion x has to be between 0 and 1. It's impossible to have 1.5 of our total n socks be a paired sock.    
+
+## How the Shiny App Works ##
+   
+For our app, the first thing that we ask the user to select is the number of simulations. Then we select the number of sock pairs and the number of unique socks picked from the load inside the washer. Unique socks are socks that do not have a corresponding pair among the socks picked. This is a sample of the total socks within the washer. Then, we choose the prior distribution for total number of socks and the prior distribution for proportion of socks that are paired. For each distribution, we let the user set the parameter(s).    
+     
+The next step is to randomly generate deviates s (number of simulations) times according to the chosen distributions and parameters. We put this into a s by 2 data frame, so that each row has a pair of numbers (t = total number of socks, p = proportion of paired socks) and we have s pairs. We take the number of unique socks and two times the number of sock pairs, add them together, to obtain the sample size of socks picked from the washer. 
+
+The third step takes t and p to simulate the number of sock pairs we have in our washer. We then use that to calculate the number of unique socks we have in our washer. We use this information to produce data. For example, if we have 2 sock pairs and 3 unique socks. We produce data like so 1,1,2,2,3,4,5. Then we take a sample of this data. The sample size is either t or the total number of socks the user was able to pick as described two paragraphs ago. We take the smallest one. The reason being, if the t = 5, but we chose to pull 10 socks out of the washer, it is impossible and the most we can pull out is all of the socks in the washer. If we have t = 10 and we choose to pull 5 socks out of the washer, this is possible so we go with the sample size decided. From that sample, we count the number of unique socks. We do this for each of the s pairs.    
+    
+The fourth step is to find all the s pairs where the produced number of unique socks in the sample is equal to the number of unique socks selected earlier in the process. 

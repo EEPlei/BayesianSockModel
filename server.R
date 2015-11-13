@@ -72,7 +72,7 @@ shinyServer(
           #number of sock pairs
           n_pairs <- round(floor(n_socks / 2) * prop_pairs)
           #number of odd socks
-          n_odd <- n_socks - n_pairs * 2
+          n_odd <- n_socks - (n_pairs * 2)
           
           # Simulating picking out n_picked socks
           socks <- rep(seq_len(n_pairs + n_odd), 
