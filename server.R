@@ -1,11 +1,12 @@
 library(truncnorm)
+library(parallel)
 
 shinyServer(
   function(input, output, session) 
   {
     # reactive() makes reactive expression 
     # an expression whose result will change over time 
-    priors = reactive(
+    priors_total = reactive(
       {
         d_total = numeric()
         if (input$total_prior == "pois")
@@ -23,7 +24,12 @@ shinyServer(
           # and prob of success in each trial (0,1]
           # negative binomial distribution
         }
-        
+        d_total
+      }
+    )
+    
+    priors_prop = reactive(
+      { 
         d_prop = numeric()
         if (input$prop_prior == "beta")
         {
@@ -35,7 +41,7 @@ shinyServer(
           # beta distribution
         } 
         else if (input$prop_prior == "tnorm")
-          {
+        {
           d_prop = rtruncnorm(n = input$n_sims,
                               a = 0,
                               b = 1,
@@ -56,48 +62,55 @@ shinyServer(
           # from min to max 
           # Uniform Distribution
         }
-        data.frame(total = d_total, prop = d_prop)
+        d_prop
       }
     )
     
     sims = reactive(
       {
-        gen_model = function(prior_N_total,prior_prop_total)
-        {
-          n_picked <- input$n_odd + 2*input$n_pairs
-          #Total socks in laundry
-          n_socks <- prior_N_total
-          #Proportion of socks in pairs
-          prop_pairs <- prior_prop_total
-          #number of sock pairs
-          n_pairs <- round(floor(n_socks / 2) * prop_pairs)
-          #number of odd socks
-          n_odd <- n_socks - (n_pairs * 2)
-          
-          # Simulating picking out n_picked socks
-          socks <- rep(seq_len(n_pairs + n_odd), 
-                       rep(c(2, 1), c(n_pairs, n_odd)))
-          picked_socks <- sample(socks, size =  min(n_picked, n_socks))
+        n_picked <- input$n_odd + 2*input$n_pairs
+        #Total socks in laundry
+        n_socks <- priors_total()
+        #Proportion of socks in pairs
+        prop_pairs <- priors_prop()
+        #number of sock pairs
+        n_pairs <- round(floor(n_socks / 2) * prop_pairs)
+        #number of odd socks
+        n_odd <- n_socks - n_pairs * 2
+        dataS <- data.frame(n_pairs, n_odd, n_socks)
+        # Simulating picking out n_picked socks
+        socks <- function(x){
+          list_sim <- rep(seq_len(x[1] + x[2]), 
+                          rep(c(2,1), c(x[1], x[2])))
+          picked_socks <- sample(list_sim, size = min(n_picked, x[3]))
           sock_counts <- table(picked_socks)
-          
-          # Returning the parameters and counts of the number of matched 
-          # and unique socks among those that were picked out.
           sock_sim <- sum(sock_counts == 1)
-          
           return(sock_sim)
         }
-        # model generates num of paired and unique socks 
-        # based on our prior 
-        apply(priors(),1, function(x) gen_model(x[1],x[2]))
-        # for each produced ith of the n pairs (total prior, prop prior)
-        # run through gen_model to produce num of paired + unique socks
-        # for each pair of priors 
+        sock_uniq <- apply(dataS, 1, socks)
+        
+        # Returning the parameters and counts of the number of matched 
+        # and unique socks among those that were picked out.
+        
+        
+        sock_uniq
       }
     )
     
-    posterior = reactive(
+    posterior_N = reactive(
       {
-        priors()[sims()==input$n_odd,]
+        priors_total()[sims()==input$n_odd1]
+        # from pair of priors produced 
+        # subset the ones where 
+        # the num of unique socks our gen_model produced 
+        # equals the num of unique socks we picked 
+        
+      }
+    )
+    
+    posterior_p = reactive(
+      {
+        priors_prop()[sims()==input$n_odd1]
         # from pair of priors produced 
         # subset the ones where 
         # the num of unique socks our gen_model produced 
@@ -108,23 +121,22 @@ shinyServer(
     output$total_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,1], freq=FALSE, 
-             main="Total Socks in Laundry", 
+        hist(posterior_N(), freq=FALSE,
+             main="Total Socks in Laundry",
              xlab = "Total Socks")
-        lines(density(priors()$total), col='blue',lwd=2)
-        abline(v = mean(posterior()[,1]), col = 'purple')
+        lines(density(priors_total()), col='blue',lwd=2)
       }
     )
     
     output$prop_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,2], freq=FALSE, 
-             main="Proportion of Socks in Pairs", 
+        hist(posterior_p(), freq=FALSE,
+             main="Proportion of Socks in Pairs",
              xlab = "% of Total Socks Part of a Pair")
-        lines(density(priors()$prop), col='red',lwd=2)
-        abline(v = mean(posterior()[,2]), col = 'orange')
+        plot(density(priors_prop()), col='red',lwd=2)
       }
     )
   }
 )
+

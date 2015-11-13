@@ -20,10 +20,10 @@ shinyUI( # create user interface #
                    value = 1000, min = 100, step = 1),
       hr(),
       h4("Data:"),
-      sliderInput("n_pairs", "Number of Sock Pairs Picked:", 
+      sliderInput("n_pairs1", "Number of Sock Pairs Picked:", 
                   min=0, max=30, value=0, step=1),
-      sliderInput("n_odd", "Number of Unique Socks Picked:", 
-                  min=0, max=30, value=0, step=1),
+      sliderInput("n_odd1", "Number of Unique Socks Picked:", 
+                  min=0, max=30, value=11, step=1),
       hr(),
       h4("Priors:"),
       radioButtons("total_prior", "Prior for Total Number of Socks", 
@@ -41,7 +41,7 @@ shinyUI( # create user interface #
       conditionalPanel(
         condition="input.total_prior == 'nbinom'",
         numericInput("total_r",HTML("Total Prior - r"), 
-                     value = 50, min=1, max=120),
+                     value = 30, min=1, max=120),
         numericInput("total_p",HTML("Total Prior - p"), 
                      value = 0.5, min=0, max=1)
       ),
