@@ -3,23 +3,46 @@ library(truncnorm)
 shinyServer(
   function(input, output, session) 
   {
-    
+    # reactive() makes reactive expression 
+    # an expression whose result will change over time 
     priors = reactive(
       {
         d_total = numeric()
         if (input$total_prior == "pois")
         {
-          d_total = rpois(input$n_sims, input$total_lambda)  
+          d_total = rpois(n = input$n_sims, 
+                          lambda = input$total_lambda)  
+          # generate n random deviates with lambda parameter
+          # with poisson distribution
         } else {
-          d_total = rnbinom(input$n_sims,size = input$total_r, prob = input$total_p)
+          d_total = rnbinom(n = input$n_sims,
+                            size = input$total_r,
+                            prob = input$total_p)
+          # generate n random deviates with 
+          # size number of successful trials - must be pos.
+          # and prob of success in each trial (0,1]
+          # negative binomial distribution
         }
         
         d_prop = numeric()
         if (input$prop_prior == "beta")
         {
-          d_prop = rbeta(input$n_sims, input$prop_alpha, input$prop_beta)  
+          d_prop = rbeta(n = input$n_sims, 
+                         shape1 = input$prop_alpha, 
+                         shape2 = input$prop_beta)  
+          # generate n random deviates with 
+          # shape 1 and shape 2 as parameters 
+          # beta distribution
         } else {
-          d_prop = rtruncnorm(input$n_sims,0,1,input$prop_mu,input$prop_sigma)
+          d_prop = rtruncnorm(n = input$n_sims,
+                              a = 0,
+                              b = 1,
+                              mean = input$prop_mu,
+                              sd = input$prop_sigma)
+          # generate n random deviates with 
+          # a = lower bound
+          # b = upper bound
+          # with mean and sd stand. dev.  
         }
         
         data.frame(total = d_total, prop = d_prop)
@@ -41,7 +64,8 @@ shinyServer(
           n_odd <- n_socks - n_pairs * 2
           
           # Simulating picking out n_picked socks
-          socks <- rep(seq_len(n_pairs + n_odd), rep(c(2, 1), c(n_pairs, n_odd)))
+          socks <- rep(seq_len(n_pairs + n_odd), 
+                       rep(c(2, 1), c(n_pairs, n_odd)))
           picked_socks <- sample(socks, size =  min(n_picked, n_socks))
           sock_counts <- table(picked_socks)
           
@@ -51,28 +75,40 @@ shinyServer(
           
           return(sock_sim)
         }
-        
+        # model generates num of paired and unique socks 
+        # based on our prior 
         apply(priors(),1, function(x) gen_model(x[1],x[2]))
+        # for each produced ith of the n pairs (total prior, prop prior)
+        # run through gen_model to produce num of paired + unique socks
+        # for each pair of priors 
       }
     )
     
     posterior = reactive(
       {
         priors()[sims()==input$n_odd,]
+        # from pair of priors produced 
+        # subset the ones where 
+        # the num of unique socks our gen_model produced 
+        # equals the num of unique socks we picked 
       }
     )
     
     output$total_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,1], freq=FALSE, main="Total Socks in Laundry")
+        hist(posterior()[,1], freq=FALSE, 
+             main="Total Socks in Laundry", 
+             xlab = "Total Socks")
       }
     )
     
     output$prop_plot = renderPlot(
       {
         par(mar=c(4,4,4,0.1))
-        hist(posterior()[,2], freq=FALSE, main="Proportion of Socks in Pairs")
+        hist(posterior()[,2], freq=FALSE, 
+             main="Proportion of Socks in Pairs", 
+             xlab = "% of Total Socks Part of a Pair")
       }
     )
   }
