@@ -11,7 +11,7 @@ For our implementation, we chose the following discrete distributions to deterim
 We selected discrete distributions as it is highly unlikely obtain a "fraction" of a sock in our scenario. 
 
 ## Prior Distributions ##
-The `Poisson` distribution has one parameter: `p`, the possibility of success within each trial. In our scenario `p` corresponds to the probability that we have `n` socks in the washer. The `Negative Binomial` distribution has two parameters, `p` and `r`. `P` is the possibility of success within each trial and `r` is the number of success accumulated. For example, if we have a laundry basket with a variety of clothes, shirts, pants, socks, and others, `p` is the possibility that an article of clothing inside the laundry basket is a sock and `r` is the total number of socks inside the laundry basket. The `Uniform` distribution-----      
+The `Poisson` distribution has one parameter: `p`, the possibility of success within each trial. In our scenario `p` corresponds to the probability that we have `n` socks in the washer. The `Negative Binomial` distribution has two parameters, `p` and `r`. `P` is the possibility of success within each trial and `r` is the number of success accumulated. For example, if we have a laundry basket with a variety of clothes, shirts, pants, socks, and others, `p` is the possibility that an article of clothing inside the laundry basket is a sock and `r` is the total number of socks inside the laundry basket. 
         
 To describe the proportion of socks that are part of pair within the total number of socks in the washer, we use the following continuous distributions. 
 `Beta`     
