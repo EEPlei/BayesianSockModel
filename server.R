@@ -68,7 +68,7 @@ shinyServer(
     
     sims = reactive(
       {
-        n_picked <- input$n_odd + 2*input$n_pairs
+        n_picked <- input$n_odd1 + 2*input$n_pairs1
         #Total socks in laundry
         n_socks <- priors_total()
         #Proportion of socks in pairs
@@ -78,43 +78,64 @@ shinyServer(
         #number of odd socks
         n_odd <- n_socks - n_pairs * 2
         dataS <- data.frame(n_pairs, n_odd, n_socks)
+        # data frame 
+        # first column is number of sock pairs in washer 
+        # second column is number of unique socks in washer 
+        # third column is total number of socks in washer 
+        # generated earlier 
+        
         # Simulating picking out n_picked socks
         socks <- function(x){
+          # take in vector of three numbers 
+          # first number is nubmer of sock pairs in washer
+          # second number is number of unique socks in washer
+          # third number is total number of socks in washer
           list_sim <- rep(seq_len(x[1] + x[2]), 
                           rep(c(2,1), c(x[1], x[2])))
+          # generate sequence to represent situation inside washer 
           picked_socks <- sample(list_sim, size = min(n_picked, x[3]))
+          # from socks inside washer, take a sample 
+          # sample size is either the sample size you determined earlier 
+          # or the total number of socks inside washer
+          # if you want to pick out 5 socks, but you only have 3 socks in washer
+          # you pick out 3 socks 
+          # if you want to pick out 5 socks an washer has 7 socks
+          # you pick out 5 socks
           sock_counts <- table(picked_socks)
-          sock_sim <- sum(sock_counts == 1)
+          sock_uniq <- sum(sock_counts == 1)
+          # how many unique socks we have picked out
+          sock_pair <- sum(sock_counts == 2)
+          # how many sock pairs we have picked out
+          sock_sim <- c(sock_uniq, sock_pair)
           return(sock_sim)
         }
-        sock_uniq <- apply(dataS, 1, socks)
-        
-        # Returning the parameters and counts of the number of matched 
-        # and unique socks among those that were picked out.
-        
-        
-        sock_uniq
+        sock_sit <- apply(dataS, 1, socks)
+        # for each of the n simulated data 
+        # the number of unique socks picked out
+        # the number of sock pairs picked out
+        sock_sit
       }
     )
     
     posterior_N = reactive(
       {
-        priors_total()[sims()==input$n_odd1]
-        # from pair of priors produced 
-        # subset the ones where 
-        # the num of unique socks our gen_model produced 
-        # equals the num of unique socks we picked 
+        priors_total()[sims()[1,]==input$n_odd1 & sims()[2,] == input$n_pairs1]
+        # from n generated total number of socks in washer 
+        # subset out the ones where the data simulated 
+        # has the same number of odds picked 
+        # same number of pairs picked 
         
       }
     )
     
     posterior_p = reactive(
       {
-        priors_prop()[sims()==input$n_odd1]
-        # from pair of priors produced 
-        # subset the ones where 
-        # the num of unique socks our gen_model produced 
-        # equals the num of unique socks we picked 
+        priors_prop()[sims()[1,]==input$n_odd1 & sims()[2,] == input$n_pairs1]
+        # from n generated total number of socks in washer 
+        # subset out the ones where the data simulated 
+        # has the same number of odds picked 
+        # same number of pairs picked 
+        
       }
     )
     
