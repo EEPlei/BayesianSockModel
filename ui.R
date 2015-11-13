@@ -62,9 +62,9 @@ shinyUI( # create user interface #
       conditionalPanel(
         condition="input.prop_prior == 'unif'",
         numericInput("prop_min",HTML("Proportion Prior - Min;"), 
-                     value = 0, min=0, max=30),
+                     value = 0, min=0, max=1),
         numericInput("prop_max",HTML("Proportion Prior - Max;"), 
-                     value = 30, min=0, max=60)
+                     value = 0.5, min=0, max=1)
       )
     ),
     mainPanel(
