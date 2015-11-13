@@ -17,7 +17,7 @@ shinyUI( # create user interface #
     sidebarPanel( # creates sidebar panel # 
       
       numericInput("n_sims", h4("Simulations:"), 
-                   value = 1000, min = 100, step = 1),
+                   value = 10000, min = 100, step = 1),
       hr(),
       h4("Data:"),
       sliderInput("n_pairs1", "Number of Sock Pairs Picked:", 
@@ -73,7 +73,7 @@ shinyUI( # create user interface #
       plotOutput("total_plot"), 
       br(),
       #Proportion of Socks in Pairs
-      plotOutput("prop_plot") 
+      plotOutput("prop_plot")
     )
   )
 )

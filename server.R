@@ -120,21 +120,33 @@ shinyServer(
     
     output$total_plot = renderPlot(
       {
-        par(mar=c(4,4,4,0.1))
+        par(mar=c(4,4,4,0.1), mfrow = c(1,2))
         hist(posterior_N(), freq=FALSE,
-             main="Total Socks in Laundry",
+             main="Posterior - Total Socks in Laundry",
              xlab = "Total Socks")
-        lines(density(priors_total()), col='blue',lwd=2)
+        
+        lines(density(posterior_N()), col='blue',lwd=2)
+
+        hist(priors_total(), freq=FALSE,
+             main="Prior - Proportion of Socks in Pairs",
+             xlab = "% of Total Socks Part of a Pair")
+        lines(density(priors_total()), col='red',lwd=2)
       }
     )
     
     output$prop_plot = renderPlot(
       {
-        par(mar=c(4,4,4,0.1))
+        par(mar=c(4,4,4,0.1), mfrow = c(1,2))
         hist(posterior_p(), freq=FALSE,
-             main="Proportion of Socks in Pairs",
+             main="Posterior - Proportion of Socks in Pairs",
              xlab = "% of Total Socks Part of a Pair")
-        plot(density(priors_prop()), col='red',lwd=2)
+        
+        lines(density(posterior_p()), col='red',lwd=2)
+        
+        hist(priors_prop(), freq=FALSE,
+             main="Prior - Proportion of Socks in Pairs",
+             xlab = "% of Total Socks Part of a Pair")
+        lines(density(priors_prop()), col='red',lwd=2)
       }
     )
   }
