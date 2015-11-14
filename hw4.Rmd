@@ -4,26 +4,30 @@ author: "Lei Qian"
 date: "November 11, 2015"
 output: html_document
 ---
-## Why These Priors ##
-For our implementation, we chose the following discrete distributions to deterimine the probability that n is the total number of socks we have in the washer.    
-`Poisson`     
-`Negative Binomial`
-We selected discrete distributions as it is highly unlikely obtain a "fraction" of a sock in our scenario. 
+## The Task ##
+The ultimate goal of this project is to deduce the total number of socks, denoted `n`, in the washing machine from the sample of `sock drawals` from the machine. In other words, we want to estimate how many socks are in the washing machine by using approximate Bayesian computation. 
 
 ## Prior Distributions ##
-The `Poisson` distribution has one parameter: `p`, the possibility of success within each trial. In our scenario `p` corresponds to the probability that we have `n` socks in the washer. The `Negative Binomial` distribution has two parameters, `p` and `r`. `P` is the possibility of success within each trial and `r` is the number of success accumulated. For example, if we have a laundry basket with a variety of clothes, shirts, pants, socks, and others, `p` is the possibility that an article of clothing inside the laundry basket is a sock and `r` is the total number of socks inside the laundry basket. 
+For our implementation, we chose the following discrete distributions to deterimine the probability that we have `n` socks in the washer. 
+
+`Poisson`     
+`Negative Binomial`
+
+We selected discrete distributions as it is highly unlikely obtain a "fraction" of a sock in our scenario. The `Poisson` distribution has one parameter: `p`, the possibility of success within each trial. In our scenario `p` corresponds to the probability that we have `n` socks in the washer. The `Negative Binomial` distribution has two parameters, `p` and `r`. `P` is the possibility of success within each trial and `r` is the sum of the number of successes. For example, if we have a laundry basket with a variety of clothes, shirts, pants, socks, and others, `p` is the possibility that an article of clothing inside the laundry basket is a sock and `r` is the total number of socks inside the laundry basket. 
         
 To describe the proportion of socks that are part of pair within the total number of socks in the washer, we use the following continuous distributions. 
+
 `Beta`     
 `Truncated Normal`    
 `Uniform`    
+
 We use continuous distributions in this case, because we are calculating a proportion. We denote `x` as the proportion of paired socks out of the total number of `n` socks. Thus a certain percentage of our socks have a corresponding pair. However, this does not directly lead to the total number of socks as there can exist `single pair of sock`. Firstly, the `Beta` distribution has two parameters, `a` and `b`. These are referred to as shape parameters. The probability that our proportion is `x` among `a + b - 2` trials is `a - 1`. For the `Truncated Normal` distribution, we have two parameters, `mean` and `standard deviation`, a `lower bound`, and an `upper bound`. The proportion paired socks, `x`, is very likely to be the mean. It becomes less and less likely as we move away from the mean and the rate at which the probability decreases is determined by the standard deviation. For the `Trunated Normal` distribution, our proportion `x` is bounded between two numbers. The `Uniform Distribution` tells us that our proportion `x` is equally likely to be any number. We added this distribution, since we do not know the number of people putting their socks. Thus we are assuming each person is equally likely to put their socks into the basket. In this case, our proportion `x` has to be between 0 and 1.     
 
 ## How the Shiny App Works ##
    
-For our app, the first thing that we ask the user to select is the number of simulations. Then we select the number of sock pairs and the number of unique socks picked from the load inside the washer. Unique socks are socks that do not have a corresponding pair among the socks picked. This is a sample of the total socks within the washer. Then, we choose the prior distribution for total number of socks and the prior distribution for proportion of socks that are paired. For each distribution, we let the user set the parameter(s).    
+For our app, the first item that we ask the user to select is the `number of simulations`, followed by the `number of sock pairs picked` and the `number of unique socks picked`. The `number of sock pairs` denote, literally, the number of "pairs" that are picked. On the other hand, the `number of unique socks picked` represent the number of singletons--a sock that do not have a match--that are picked. Adding the two numbers, we have a sample of the total socks in the washer. Then, we choose the prior distribution for total number of socks and the prior distribution for proportion of socks that are paired. For each distribution, we let the user set the parameter(s).    
      
-The next step is to randomly generate deviates s (number of simulations) times according to the chosen distributions and parameters. We put this into an s by 2 data frame, so that each row has a pair of numbers (t = total number of socks, p = proportion of paired socks) and we have s pairs. We take the number of unique socks and two times the number of sock pairs, add them together, to obtain the sample size of socks picked from the washer. 
+The next step is to randomly generate deviates s (number of simulations) times according to the chosen distributions and parameters. We put this into an s by 2 data frame, so that each row has a pair of numbers (t = total number of socks, p = proportion of paired socks) and we have s pairs. We add the number of unique socks and two times the number of sock pairs (we multiply number of sock pairs by two because we want the total number of socks in the washing machine) to obtain the sample size of socks picked from the washer. 
 
 The third step takes t and p to simulate the number of sock pairs we have in our washer. We then use that to calculate the number of unique socks we have in our washer. We use this information to produce data. For example, if we have 2 sock pairs and 3 unique socks. We produce data like so 1,1,2,2,3,4,5. Then we take a sample of this data. The sample size is either t or the total number of socks the user was able to pick as described two paragraphs ago. We take the smallest one. The reason being, if the t = 5, but we chose to pull 10 socks out of the washer, it is impossible and the most we can pull out is all of the socks in the washer. If we have t = 10 and we choose to pull 5 socks out of the washer, this is possible so we go with the sample size decided. From that sample, we count the number of unique socks. We do this for each of the s pairs.    
     
