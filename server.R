@@ -149,6 +149,8 @@ shinyServer(
         lines(density(posterior_N()), col='blue',lwd=2, 
               xlab = NULL,
               ylab = NULL)
+        abline(v = mean(posterior_N()), col = 'orange')
+        abline(v = median(posterior_N()), col = 'green')
         hist(posterior_p(), freq=FALSE,
              main="Posterior - Proportion of Socks in Pairs",
              xlab = "% of Total Socks Part of a Pair",
@@ -156,6 +158,8 @@ shinyServer(
         lines(density(posterior_p()), col='blue',lwd=2, 
               xlab = NULL,
               ylab = NULL)
+        abline(v = mean(posterior_p()), col = 'orange')
+        abline(v = median(posterior_p()), col = 'green')
         hist(sims()[1,], freq = FALSE, 
              main = "Posterior - Odd Socks Picked", 
              xlab = "# of Unique Socks", 
@@ -163,6 +167,8 @@ shinyServer(
         lines(density(sims()[1,]), col = 'blue', lwd = 2, 
               xlab = NULL, 
               ylab = NULL)
+        abline(v = mean(sims()[1,]), col = 'orange')
+        abline(v = median(sims()[1,]), col = 'green')
         hist(sims()[2,], freq = FALSE, 
              main = "Posterior - Sock Pairs Picked", 
              xlab = "# of Pairs", 
@@ -170,6 +176,8 @@ shinyServer(
         lines(density(sims()[2,]), col = 'blue', lwd = 2, 
               xlab = NULL, 
               ylab = NULL)
+        abline(v = mean(sims()[2,]), col = 'orange')
+        abline(v = median(sims()[2,]), col = 'green')
       }
     )
     
@@ -188,6 +196,8 @@ shinyServer(
         lines(density(priors_total()), col='red',lwd=2, 
               xlab = NULL,
               ylab = NULL)
+        abline(v = mean(priors_total()), col = 'orange')
+        abline(v = median(priors_total()), col = 'green')
         hist(priors_prop(), freq=FALSE,
              main="Prior - Proportion of Socks in Pairs",
              xlab = "% of Total Socks Part of a Pair",
@@ -195,6 +205,8 @@ shinyServer(
         lines(density(priors_prop()), col='red',lwd=2, 
               xlab = NULL,
               ylab = NULL)
+        abline(v = mean(priors_prop()), col = 'orange')
+        abline(v = median(priors_prop()), col = 'green')
         hist(n_pairs, freq = FALSE, 
              main = "Prior - Odd Socks Picked", 
              xlab = "# of Unique Socks", 
@@ -202,6 +214,8 @@ shinyServer(
         lines(density(n_pairs), col = 'red', lwd = 2, 
               xlab = NULL, 
               ylab = NULL)
+        abline(v = mean(n_pairs), col = 'orange')
+        abline(v = median(n_pairs), col = 'green')
         hist(n_odd, freq = FALSE, 
              main = "Prior - Sock Pairs Picked", 
              xlab = "# of Pairs", 
@@ -209,6 +223,8 @@ shinyServer(
         lines(density(n_odd), col = 'red', lwd = 2, 
               xlab = NULL, 
               ylab = NULL)
+        abline(v = mean(n_odd), col = 'orange')
+        abline(v = median(n_odd), col = 'green')
       }
     )
     output$summary_table <- renderTable(
@@ -220,6 +236,17 @@ shinyServer(
        rownames(x) <- c("Posterior Total Socks", "Posterior Proportion Paired",
                         "Posterior Odd Socks", "Posterior Paired Socks")
        x
+      }
+    )
+    output$credible_table <- renderTable(
+      {
+        y <- rbind(quantile(posterior_N(), probs = c(0.025, 0.975)),
+                   quantile(posterior_p(), probs = c(0.025, 0.975)),
+                   quantile(sims()[1,], probs = c(0.025, 0.975)),
+                   quantile(sims()[2,], probs = c(0.025, 0.975)))
+        rownames(y) <- c("Posterior Total Socks", "Posterior Proportion Paired",
+                         "Posterior Odd Socks", "Posterior Paired Socks")
+        y
       }
     )
   }

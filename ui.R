@@ -70,7 +70,9 @@ shinyUI( # create user interface #
                      value = 0.5, min=0, max=1)
       ), 
       hr(),
-      selectInput("table", "Summary Table Option", option_table)
+      selectInput("table", "Summary Table Option", option_table), 
+      hr(), 
+      selectInput("table1", "95% Credible Interval Option", option_table)
     ),
     mainPanel(
       h4("Results:"),
@@ -83,6 +85,11 @@ shinyUI( # create user interface #
       conditionalPanel(
         condition = "input.table == 'y'", 
         tableOutput("summary_table")
+      ), 
+      br(),
+      conditionalPanel(
+        condition = "input.table1 == 'y'", 
+        tableOutput("credible_table")
       )
     )
   )
