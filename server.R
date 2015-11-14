@@ -109,7 +109,19 @@ shinyServer(
           sock_sim <- c(sock_uniq, sock_pair)
           return(sock_sim)
         }
+        if(input$n_sims <= 5000){
         sock_sit <- apply(dataS, 1, socks)
+        }
+        else{
+          t = floor(input$n_sims/4)
+          x = list(dataS[1:t, ],dataS[(t+1):(2*t),], 
+                   dataS[((2*t)+1):(3*t),],dataS[((3*t)+1):input$n_sims,])
+          apply_func <- function(x){
+            apply(x,1,socks)
+          }
+          y <- mclapply(x,apply_func, mc.cores = 4)
+          sock_sit <- cbind(y[[1]], y[[2]], y[[3]], y[[4]])
+        }
         # for each of the n simulated data 
         # the number of unique socks picked out
         # the number of sock pairs picked out
