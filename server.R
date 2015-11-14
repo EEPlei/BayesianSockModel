@@ -163,7 +163,7 @@ shinyServer(
         abline(v = median(posterior_p()), col = 'green')
         legend("topright", c("Mean","Median"), lty=c(1,1), lwd=c(2.5,2.5),col=c("orange","green"))
         hist(sims()[1,], freq = FALSE, 
-             main = "Posterior - Odd Socks Picked", 
+             main = "Posterior - Odd Socks", 
              xlab = "# of Unique Socks", 
              ylab = NULL)
         lines(density(sims()[1,]), col = 'blue', lwd = 2, 
@@ -173,7 +173,7 @@ shinyServer(
         abline(v = median(sims()[1,]), col = 'green')
         legend("topleft", c("Mean","Median"), lty=c(1,1), lwd=c(2.5,2.5),col=c("orange","green"))
         hist(sims()[2,], freq = FALSE, 
-             main = "Posterior - Sock Pairs Picked", 
+             main = "Posterior - Sock Pairs", 
              xlab = "# of Pairs", 
              ylab = NULL)
         lines(density(sims()[2,]), col = 'blue', lwd = 2, 
@@ -214,7 +214,7 @@ shinyServer(
         abline(v = median(priors_prop()), col = 'green')
         legend("topright", c("Mean","Median"), lty=c(1,1), lwd=c(2.5,2.5),col=c("orange","green"))
         hist(n_pairs, freq = FALSE, 
-             main = "Prior - Odd Socks Picked", 
+             main = "Prior - Odd Socks", 
              xlab = "# of Unique Socks", 
              ylab = NULL)
         lines(density(n_pairs), col = 'red', lwd = 2, 
@@ -224,7 +224,7 @@ shinyServer(
         abline(v = median(n_pairs), col = 'green')
         legend("topright", c("Mean","Median"), lty=c(1,1), lwd=c(2.5,2.5),col=c("orange","green"))
         hist(n_odd, freq = FALSE, 
-             main = "Prior - Sock Pairs Picked", 
+             main = "Prior - Sock Pairs", 
              xlab = "# of Pairs", 
              ylab = NULL)
         lines(density(n_odd), col = 'red', lwd = 2, 
