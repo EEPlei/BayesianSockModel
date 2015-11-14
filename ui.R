@@ -72,7 +72,9 @@ shinyUI( # create user interface #
       hr(),
       selectInput("table", "Summary Table Option", option_table), 
       hr(), 
-      selectInput("table1", "95% Credible Interval Option", option_table)
+      selectInput("table1", "95% Credible Interval Option", option_table),
+      hr(), 
+      selectInput("showTrueSocks", "Show True Values (only when your sampling result is the same as Karl's draw)", selected = "n", option_table)
     ),
     mainPanel(
       h4("Results:"),
@@ -90,6 +92,11 @@ shinyUI( # create user interface #
       conditionalPanel(
         condition = "input.table1 == 'y'", 
         tableOutput("credible_table")
+      ),
+      br(),
+      conditionalPanel(
+        condition = "input.showTrueSocks == 'y' & input.n_pairs1 == 0 & input.n_odd1 == 11", 
+        tableOutput("True_Result")
       )
     )
   )

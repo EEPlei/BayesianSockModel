@@ -257,6 +257,15 @@ shinyServer(
         y
       }
     )
+    
+    output$True_Result <- renderTable(
+      {
+        y <- data.frame(21,3)
+        colnames(y) <- c("Number of Pairs", "Number of Singletons")
+        rownames(y) <- c("True Values")
+        y
+      }
+    )
   }
 )
 
